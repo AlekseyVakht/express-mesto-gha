@@ -18,7 +18,7 @@ module.exports.getUserById = (req, res) => {
   User.findById(req.params.userId)
     .then((user) => res.send({ data: user }))
     .catch((err) => {
-      if (err instanceof mongoose.Error.DocumentNotFoundError) {
+      if (err.message === 'NotFound') {
         res.status(404).send({ message: 'Пользователь с указанным Id не существует' });
       } else if (err instanceof mongoose.Error.CastError) {
         res.status(400).send({ message: 'Некорректный Id' });
@@ -39,7 +39,7 @@ module.exports.updateUser = (req, res) => {
   User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
     .then((user) => res.send(user))
     .catch((err) => {
-      if (err instanceof mongoose.Error.DocumentNotFoundError) {
+      if (err.message === 'NotFound') {
         res.status(404).send({ message: 'Пользователь с указанным Id не существует' });
       } else if (err.name === 'ValidationError') {
         res.status(400).send({ message: 'Некорректно переданы данные' });
@@ -54,7 +54,7 @@ module.exports.updateUserAvatar = (req, res) => {
   User.findByIdAndUpdate(req.user._id, { avatar }, { new: true })
     .then((user) => res.send(user))
     .catch((err) => {
-      if (err instanceof mongoose.Error.DocumentNotFoundError) {
+      if (err.message === 'NotFound') {
         res.status(404).send({ message: 'Пользователь с указанным Id не существует' });
       } else if (err.name === 'ValidationError') {
         res.status(400).send({ message: 'Некорректно переданы данные' });

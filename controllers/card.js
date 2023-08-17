@@ -26,7 +26,7 @@ module.exports.deleteCard = (req, res) => {
   Card.findByIdAndRemove(req.params.cardId)
     .then((card) => res.send({ data: card }))
     .catch((err) => {
-      if (err instanceof mongoose.Error.DocumentNotFoundError) {
+      if (err.message === 'NotFound') {
         res.status(404).send({ message: 'Карточка с указанным Id не существует' });
       } else if (err instanceof mongoose.Error.CastError) {
         res.status(400).send({ message: 'Некорректный Id' });
@@ -44,7 +44,7 @@ module.exports.likeCard = (req, res) => {
   )
     .then((card) => res.send({ data: card }))
     .catch((err) => {
-      if (err instanceof mongoose.Error.DocumentNotFoundError) {
+      if (err.message === 'NotFound') {
         res.status(404).send({ message: 'Карточка с указанным Id не существует' });
       } else if (err instanceof mongoose.Error.CastError) {
         res.status(400).send({ message: 'Некорректный Id' });
@@ -62,7 +62,7 @@ module.exports.dislikeCard = (req, res) => {
   )
     .then((card) => res.send({ data: card }))
     .catch((err) => {
-      if (err instanceof mongoose.Error.DocumentNotFoundError) {
+      if (err.message === 'NotFound') {
         res.status(404).send({ message: 'Карточка с указанным Id не существует' });
       } else if (err instanceof mongoose.Error.CastError) {
         res.status(400).send({ message: 'Некорректный Id' });
