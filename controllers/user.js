@@ -2,7 +2,7 @@ const User = require('../models/user');
 
 module.exports.createUser = (req, res) => {
   const { name, about, avatar } = req.body;
-  User.create({ name, about, avatar }, { new: true, runValidators: true })
+  User.create({ name, about, avatar })
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
@@ -27,7 +27,7 @@ module.exports.getUserById = (req, res) => {
 
 module.exports.getUsers = (req, res) => {
   User.find({})
-    .then((users) => res.send({ data: users }))
+    .then((user) => res.send({ data: user }))
     .catch(() => res.status(500).send({ message: 'Ошибка на сервере' }));
 };
 
@@ -47,7 +47,7 @@ module.exports.updateUser = (req, res) => {
 module.exports.updateUserAvatar = (req, res) => {
   const { avatar } = req.body;
   User.findByIdAndUpdate(req.params.userId, { avatar }, { new: true, runValidators: true })
-    .then((users) => res.send({ data: users }))
+    .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         res.status(404).send({ message: 'Пользователь с указанным Id не существует' });
