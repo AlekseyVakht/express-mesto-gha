@@ -3,6 +3,7 @@ const User = require('../models/user');
 module.exports.createUser = (req, res) => {
   const { name, about, avatar } = req.body;
   User.create({ name, about, avatar }, { runValidators: true })
+    .orFail()
     .then((user) => res.send({ data: user }))
     .catch(() => {
       if (res.status(400)) {
@@ -15,6 +16,7 @@ module.exports.createUser = (req, res) => {
 
 module.exports.getUserById = (req, res) => {
   User.findById(req.params.userId)
+    .orFail()
     .then((user) => res.send({ data: user }))
     .catch(() => {
       if (res.status(404)) {
@@ -34,6 +36,7 @@ module.exports.getUsers = (req, res) => {
 module.exports.updateUser = (req, res) => {
   const { name, about } = req.body;
   User.findByIdAndUpdate(req.params.userId, { name, about }, { new: true, runValidators: true })
+    .orFail()
     .then((user) => res.send({ data: user }))
     .catch(() => {
       if (res.status(404)) {
@@ -47,6 +50,7 @@ module.exports.updateUser = (req, res) => {
 module.exports.updateUserAvatar = (req, res) => {
   const { avatar } = req.body;
   User.findByIdAndUpdate(req.params.userId, { avatar }, { new: true, runValidators: true })
+    .orFail()
     .then((users) => res.send({ data: users }))
     .catch(() => {
       if (res.status(404)) {
