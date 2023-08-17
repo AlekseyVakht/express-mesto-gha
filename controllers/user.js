@@ -2,7 +2,7 @@ const User = require('../models/user');
 
 module.exports.createUser = (req, res) => {
   const { name, about, avatar } = req.body;
-  User.create({ name, about, avatar }, { new: true, runValidators: true })
+  User.create({ name, about, avatar }, { runValidators: true })
     .then((user) => res.send({ data: user }))
     .catch(() => {
       if (res.status(400)) {
@@ -33,7 +33,7 @@ module.exports.getUsers = (req, res) => {
 
 module.exports.updateUser = (req, res) => {
   const { name, about } = req.body;
-  User.findByIdAndUpdate(req.user._id, { name, about })
+  User.findByIdAndUpdate(req.params.userId, { name, about }, { new: true, runValidators: true })
     .then((user) => res.send({ data: user }))
     .catch(() => {
       if (res.status(404)) {
@@ -46,7 +46,7 @@ module.exports.updateUser = (req, res) => {
 
 module.exports.updateUserAvatar = (req, res) => {
   const { avatar } = req.body;
-  User.findByIdAndUpdate(req.user._id, { avatar })
+  User.findByIdAndUpdate(req.params.userId, { avatar }, { new: true, runValidators: true })
     .then((users) => res.send({ data: users }))
     .catch(() => {
       if (res.status(404)) {
