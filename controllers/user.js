@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const User = require('../models/user');
 
 module.exports.createUser = (req, res) => {
@@ -17,8 +18,10 @@ module.exports.getUserById = (req, res) => {
   User.findById(req.params.userId)
     .then((user) => res.send({ data: user }))
     .catch((err) => {
-      if (err.name === 'ValidationError') {
+      if (err instanceof mongoose.Error.DocumentNotFoundError) {
         res.status(404).send({ message: 'Пользователь с указанным Id не существует' });
+      } else if (err instanceof mongoose.Error.CastError) {
+        res.status(400).send({ message: 'Некорректный Id' });
       } else {
         res.status(500).send({ message: 'Ошибка на сервере' });
       }
@@ -36,8 +39,10 @@ module.exports.updateUser = (req, res) => {
   User.findByIdAndUpdate(req.params.userId, { name, about }, { new: true, runValidators: true })
     .then((user) => res.send({ data: user }))
     .catch((err) => {
-      if (err.name === 'ValidationError') {
+      if (err instanceof mongoose.Error.DocumentNotFoundError) {
         res.status(404).send({ message: 'Пользователь с указанным Id не существует' });
+      } else if (err instanceof mongoose.Error.CastError) {
+        res.status(400).send({ message: 'Некорректный Id' });
       } else {
         res.status(500).send({ message: 'Ошибка на сервере' });
       }
@@ -49,8 +54,10 @@ module.exports.updateUserAvatar = (req, res) => {
   User.findByIdAndUpdate(req.params.userId, { avatar }, { new: true, runValidators: true })
     .then((user) => res.send({ data: user }))
     .catch((err) => {
-      if (err.name === 'ValidationError') {
+      if (err instanceof mongoose.Error.DocumentNotFoundError) {
         res.status(404).send({ message: 'Пользователь с указанным Id не существует' });
+      } else if (err instanceof mongoose.Error.CastError) {
+        res.status(400).send({ message: 'Некорректный Id' });
       } else {
         res.status(500).send({ message: 'Ошибка на сервере' });
       }
