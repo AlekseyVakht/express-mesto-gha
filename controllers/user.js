@@ -31,7 +31,7 @@ module.exports.getUserById = (req, res) => {
 module.exports.getUsers = (req, res) => {
   User.find({})
     .then((users) => res.send({ data: users }))
-    .catch((err) => res.status(500).send({ message: 'Ошибка на сервере' }));
+    .catch(() => res.status(500).send({ message: 'Ошибка на сервере' }));
 };
 
 module.exports.updateUser = (req, res) => {
