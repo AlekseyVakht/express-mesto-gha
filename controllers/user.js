@@ -6,7 +6,6 @@ module.exports.createUser = (req, res) => {
   User.create({ name, about, avatar })
     .then((user) => res.send({ data: user }))
     .catch((err) => {
-      console.log(mongoose.Error);
       if (err instanceof mongoose.Error.CastError) {
         res.status(400).send({ message: 'Переданы некорректные данные при создании пользователя' });
       } else if (err instanceof mongoose.Error.DocumentNotFoundError) {
@@ -53,7 +52,6 @@ module.exports.updateUserAvatar = (req, res) => {
   User.findByIdAndUpdate(req.user._id, { avatar })
     .then((users) => res.send({ data: users }))
     .catch((err) => {
-      console.log(mongoose.Error);
       if (err instanceof mongoose.Error.DocumentNotFoundError) {
         res.status(404).send({ message: 'Пользователь с указанным Id не найден' });
       } else {

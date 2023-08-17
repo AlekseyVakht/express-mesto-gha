@@ -5,7 +5,7 @@ module.exports.getCards = (req, res) => {
   Card.find({})
     .populate('owner')
     .then((card) => res.send({ data: card }))
-    .catch((err) => res.status(500).send({ message: 'Ошибка на сервере' }));
+    .catch(() => res.status(500).send({ message: 'Ошибка на сервере' }));
 };
 
 module.exports.createCard = (req, res) => {
@@ -14,7 +14,6 @@ module.exports.createCard = (req, res) => {
   Card.create({ name, link, owner }, { new: true, runValidators: true })
     .then((card) => res.send({ data: card }))
     .catch((err) => {
-      console.log(mongoose.Error);
       if (err instanceof mongoose.Error.CastError) {
         res.status(400).send({ message: 'Некорректно переданы данные карточки' });
       } else {
