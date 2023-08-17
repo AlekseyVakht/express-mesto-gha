@@ -2,11 +2,11 @@ const User = require('../models/user');
 
 module.exports.createUser = (req, res) => {
   const { name, about, avatar } = req.body;
-  User.create({ name, about, avatar }, { runValidators: true })
+  User.create({ name, about, avatar }, { new: true, runValidators: true })
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(400).send({ message: 'Некорректно переданые данные' });
+        res.status(400).send({ message: 'Некорректно переданы данные' });
       } else {
         res.status(500).send({ message: 'Ошибка на сервере' });
       }
