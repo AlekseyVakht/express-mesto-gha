@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const Card = require('../models/card');
 
 module.exports.getCards = (req, res) => {
@@ -25,8 +26,10 @@ module.exports.deleteCard = (req, res) => {
   Card.findByIdAndRemove(req.params.cardId)
     .then((card) => res.send({ data: card }))
     .catch((err) => {
-      if (err.name === 'ValidationError') {
+      if (err instanceof mongoose.Error.DocumentNotFoundError) {
         res.status(404).send({ message: 'Карточка с указанным Id не существует' });
+      } else if (err instanceof mongoose.Error.CastError) {
+        res.status(400).send({ message: 'Некорректный Id' });
       } else {
         res.status(500).send({ message: 'Ошибка на сервере' });
       }
@@ -41,8 +44,10 @@ module.exports.likeCard = (req, res) => {
   )
     .then((card) => res.send({ data: card }))
     .catch((err) => {
-      if (err.name === 'ValidationError') {
+      if (err instanceof mongoose.Error.DocumentNotFoundError) {
         res.status(404).send({ message: 'Карточка с указанным Id не существует' });
+      } else if (err instanceof mongoose.Error.CastError) {
+        res.status(400).send({ message: 'Некорректный Id' });
       } else {
         res.status(500).send({ message: 'Ошибка на сервере' });
       }
@@ -57,8 +62,10 @@ module.exports.dislikeCard = (req, res) => {
   )
     .then((card) => res.send({ data: card }))
     .catch((err) => {
-      if (err.name === 'ValidationError') {
+      if (err instanceof mongoose.Error.DocumentNotFoundError) {
         res.status(404).send({ message: 'Карточка с указанным Id не существует' });
+      } else if (err instanceof mongoose.Error.CastError) {
+        res.status(400).send({ message: 'Некорректный Id' });
       } else {
         res.status(500).send({ message: 'Ошибка на сервере' });
       }
