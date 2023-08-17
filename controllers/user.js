@@ -55,3 +55,4 @@ module.exports.updateUserAvatar = (req, res) => {
         res.status(500).send({ message: 'Ошибка на сервере' });
       }
     });
+};
