@@ -5,7 +5,7 @@ const Card = require('../models/card');
 module.exports.getCards = (req, res) => {
   Card.find({})
     .populate('owner')
-    .then((card) => res.send({ data: card }))
+    .then((cards) => res.send({ data: cards }))
     .catch(() => res.status(httpConstants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send({ message: 'Ошибка на сервере' }));
 };
 
@@ -25,10 +25,16 @@ module.exports.createCard = (req, res) => {
 
 module.exports.deleteCard = (req, res) => {
   Card.findByIdAndRemove(req.params.cardId)
-    .then((card) => res.send({ data: card }))
-    .catch((err) => {
-      if (err instanceof mongoose.Error.DocumentNotFoundError) {
+    .then((card) => {
+      if (!card) {
         res.status(httpConstants.HTTP_STATUS_NOT_FOUND).send({ message: 'Карточка с указанным Id не существует' });
+        return;
+      }
+      res.send(card);
+    })
+    .catch((err) => {
+      if (err instanceof mongoose.Error.CastError) {
+        res.status(httpConstants.HTTP_STATUS_BAD_REQUEST).send({ message: 'Некорректно переданы данные карточки' });
       } else {
         res.status(httpConstants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send({ message: 'Ошибка на сервере' });
       }
@@ -41,11 +47,15 @@ module.exports.likeCard = (req, res) => {
     { $addToSet: { likes: req.user._id } },
     { new: true },
   )
-    .then((card) => res.send({ data: card }))
-    .catch((err) => {
-      if (err instanceof mongoose.Error.DocumentNotFoundError) {
+    .then((card) => {
+      if (!card) {
         res.status(httpConstants.HTTP_STATUS_NOT_FOUND).send({ message: 'Карточка с указанным Id не существует' });
-      } else if (err instanceof mongoose.Error.CastError) {
+        return;
+      }
+      res.send(card);
+    })
+    .catch((err) => {
+      if (err instanceof mongoose.Error.CastError) {
         res.status(httpConstants.HTTP_STATUS_BAD_REQUEST).send({ message: 'Некорректный Id' });
       } else {
         res.status(httpConstants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send({ message: 'Ошибка на сервере' });
@@ -59,11 +69,15 @@ module.exports.dislikeCard = (req, res) => {
     { $pull: { likes: req.user._id } },
     { new: true },
   )
-    .then((card) => res.send({ data: card }))
-    .catch((err) => {
-      if (err instanceof mongoose.Error.DocumentNotFoundError) {
+    .then((card) => {
+      if (!card) {
         res.status(httpConstants.HTTP_STATUS_NOT_FOUND).send({ message: 'Карточка с указанным Id не существует' });
-      } else if (err instanceof mongoose.Error.CastError) {
+        return;
+      }
+      res.send(card);
+    })
+    .catch((err) => {
+      if (err instanceof mongoose.Error.CastError) {
         res.status(httpConstants.HTTP_STATUS_BAD_REQUEST).send({ message: 'Некорректный Id' });
       } else {
         res.status(httpConstants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send({ message: 'Ошибка на сервере' });

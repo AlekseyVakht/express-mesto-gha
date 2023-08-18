@@ -17,11 +17,15 @@ module.exports.createUser = (req, res) => {
 
 module.exports.getUserById = (req, res) => {
   User.findById(req.params.userId)
-    .then((user) => res.send({ user }))
+    .then((user) => {
+      if (!user) {
+        res.status(httpConstants.HTTP_STATUS_NOT_FOUND).send({ message: 'Пользователя с указанным Id не существует' });
+        return;
+      }
+      res.send(user);
+    })
     .catch((err) => {
-      if (err instanceof mongoose.Error.DocumentNotFoundError) {
-        res.status(httpConstants.HTTP_STATUS_NOT_FOUND).send({ message: 'Пользователь с указанным Id не существует' });
-      } else if (err instanceof mongoose.Error.CastError) {
+      if (err instanceof mongoose.Error.CastError) {
         res.status(httpConstants.HTTP_STATUS_BAD_REQUEST).send({ message: 'Некорректный Id' });
       } else {
         res.status(httpConstants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send({ message: 'Ошибка на сервере' });
@@ -37,12 +41,16 @@ module.exports.getUsers = (req, res) => {
 
 module.exports.updateUser = (req, res) => {
   const { name, about } = req.body;
-  User.findByIdAndUpdate(req.params.userId, { name, about }, { new: true, runValidators: true })
-    .then((user) => res.send(user))
+  User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
+    .then((user) => {
+      if (!user) {
+        res.status(httpConstants.HTTP_STATUS_NOT_FOUND).send({ message: 'Пользователя с указанным Id не существует' });
+        return;
+      }
+      res.send(user);
+    })
     .catch((err) => {
-      if (err instanceof mongoose.Error.DocumentNotFoundError) {
-        res.status(httpConstants.HTTP_STATUS_NOT_FOUND).send({ message: 'Пользователь с указанным Id не существует' });
-      } else if (err.name === 'ValidationError') {
+      if (err.name === 'ValidationError') {
         res.status(httpConstants.HTTP_STATUS_BAD_REQUEST).send({ message: 'Некорректно переданы данные' });
       } else {
         res.status(httpConstants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send({ message: 'Ошибка на сервере' });
@@ -52,12 +60,16 @@ module.exports.updateUser = (req, res) => {
 
 module.exports.updateUserAvatar = (req, res) => {
   const { avatar } = req.body;
-  User.findByIdAndUpdate(req.params.userId, { avatar }, { new: true })
-    .then((user) => res.send(user))
+  User.findByIdAndUpdate(req.user._id, { avatar }, { new: true })
+    .then((user) => {
+      if (!user) {
+        res.status(httpConstants.HTTP_STATUS_NOT_FOUND).send({ message: 'Пользователя с указанным Id не существует' });
+        return;
+      }
+      res.send(user);
+    })
     .catch((err) => {
-      if (err instanceof mongoose.Error.DocumentNotFoundError) {
-        res.status(httpConstants.HTTP_STATUS_NOT_FOUND).send({ message: 'Пользователь с указанным Id не существует' });
-      } else if (err.name === 'ValidationError') {
+      if (err.name === 'ValidationError') {
         res.status(httpConstants.HTTP_STATUS_BAD_REQUEST).send({ message: 'Некорректно переданы данные' });
       } else {
         res.status(httpConstants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send({ message: 'Ошибка на сервере' });

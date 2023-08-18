@@ -1,3 +1,4 @@
+const httpConstants = require('http2').constants;
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
@@ -19,5 +20,9 @@ app.use((req, res, next) => {
 
 app.use('/users', require('./routes/user'));
 app.use('/cards', require('./routes/card'));
+
+app.use('*', (req, res) => {
+  res.status(httpConstants.HTTP_STATUS_NOT_FOUND).send({ message: 'Not Found' });
+});
 
 app.listen(PORT);
