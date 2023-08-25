@@ -35,7 +35,6 @@ app.post('/signup', celebrate({
   }).unknown(true),
 }), createUser);
 
-app.use(errors());
 app.use(auth);
 
 app.use('/users', require('./routes/user'));
@@ -45,7 +44,8 @@ app.use('*', (req, res, next) => {
   next(new NotFoundError('Not Found'));
 });
 
-app.use((err, req, res, next) => {
+app.use(errors());
+app.use((err, req, res) => {
   const { statusCode = 500, message } = err;
   res
     .status(statusCode)

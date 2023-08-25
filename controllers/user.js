@@ -1,3 +1,4 @@
+const httpConstants = require('http2').constants;
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const mongoose = require('mongoose');
@@ -23,12 +24,15 @@ module.exports.createUser = (req, res, next) => {
       email,
       password: hash,
     }))
-    .then((user) => res.send({ user }))
+    .then((user, err) => {
+      if (err.code === 11000) {
+        throw new ConflictError('Пользователь с указанным email зарегистрирован');
+      }
+      res.status(httpConstants.HTTP_STATUS_OK).send({ user });
+    })
     .catch((err) => {
       if (err instanceof mongoose.Error.CastError) {
         next(new BadRequestError('Некорректно переданы данные'));
-      } else if (err.code === 11000) {
-        next(new ConflictError('Пользователь с указанным email зарегистрирован'));
       } else {
         next(err);
       }
