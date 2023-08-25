@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 const mongoose = require('mongoose');
 const { NotFoundError } = require('../errors/NotFoundError');
 const { BadRequestError } = require('../errors/BadRequestError');
-const { UnauthorizedError } = require('../errors/UnauthorizedError');
+// const { UnauthorizedError } = require('../errors/UnauthorizedError');
 const { ConflictError } = require('../errors/ConflictError');
 const User = require('../models/user');
 
@@ -12,7 +12,7 @@ module.exports.createUser = (req, res, next) => {
   const {
     name,
     about,
-    link,
+    avatar,
     email,
     password,
   } = req.body;
@@ -20,18 +20,22 @@ module.exports.createUser = (req, res, next) => {
     .then((hash) => User.create({
       name,
       about,
-      link,
+      avatar,
       email,
       password: hash,
     }))
-    .then((user, err) => {
-      if (err.code === 11000) {
-        throw new ConflictError('Пользователь с указанным email зарегистрирован');
-      }
-      res.status(httpConstants.HTTP_STATUS_OK).send({ user });
+    .then((user) => {
+      res.status(httpConstants.HTTP_STATUS_OK).send({
+        name: user.name,
+        about: user.about,
+        avatar: user.avatar,
+        email: user.email,
+      });
     })
     .catch((err) => {
-      if (err instanceof mongoose.Error.CastError) {
+      if (err.code === 11000) {
+        next(new ConflictError('Пользователь с указанным email зарегистрирован'));
+      } else if (err instanceof mongoose.Error.CastError) {
         next(new BadRequestError('Некорректно переданы данные'));
       } else {
         next(err);
@@ -50,13 +54,7 @@ module.exports.Login = (req, res, next) => {
       );
       res.send({ token });
     })
-    .catch((err) => {
-      if (err instanceof mongoose.ValidationError) {
-        next(new UnauthorizedError('Неправильный email или пароль'));
-      } else {
-        next(err);
-      }
-    });
+    .catch(next);
 };
 
 module.exports.getUserById = (req, res, next) => {
