@@ -16,6 +16,6 @@ router.patch('/me/avatar', celebrate({
   body: Joi.object().keys({
     link: Joi.string(),
   }),
-}).unknow(true), updateUserAvatar);
+}).unknown(true), updateUserAvatar);
 
 module.exports = router;
