@@ -18,7 +18,6 @@ const userSchema = new mongoose.Schema({
   },
   avatar: {
     type: String,
-    match: /^https?:\/\/(?:www\.)?[-a-zA-Z0-9!-._~:/?#[]@!&'()+,;=]{1,256}\.[-a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()!-._~:/?#[]@!&'()+,;=]*)$/,
     default: 'ссылка',
     validate: {
       validator(v) {
@@ -32,8 +31,7 @@ const userSchema = new mongoose.Schema({
     required: true,
     unique: true,
     validate: {
-      validator: (email) => validator.isEmail(email),
-      message: 'Invalid email',
+      validator: validator.isEmail,
     },
   },
   password: {
