@@ -3,6 +3,7 @@ const { errors } = require('celebrate');
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const urlRegex = require('./regex/regex');
 const {
   createUser,
   Login,
@@ -29,7 +30,7 @@ app.post('/signup', celebrate({
   body: Joi.object().keys({
     name: Joi.string().min(2).max(30),
     about: Joi.string().min(2).max(30),
-    avatar: Joi.string(),
+    avatar: Joi.string().pattern(urlRegex),
     email: Joi.string().required().email(),
     password: Joi.string().required().min(8),
   }).unknown(true),
