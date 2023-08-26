@@ -22,7 +22,7 @@ router.patch('/me', celebrate({
   body: Joi.object().keys({
     name: Joi.string().min(2).max(30),
     about: Joi.string().min(2).max(30),
-    avatar: Joi.string().pattern(urlRegex),
+    avatar: Joi.string().regex(urlRegex),
   }).unknown(true),
 }), updateUser);
 
