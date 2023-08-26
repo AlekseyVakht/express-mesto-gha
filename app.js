@@ -3,7 +3,7 @@ const { errors } = require('celebrate');
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-const urlRegex = require('./regex/regex');
+const { urlRegex } = require('./regex/regex');
 const {
   createUser,
   Login,

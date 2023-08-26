@@ -8,7 +8,7 @@ const {
   likeCard,
   dislikeCard,
 } = require('../controllers/card');
-const urlRegex = require('../regex/regex');
+const { urlRegex } = require('../regex/regex');
 
 router.get('/', getCards);
 router.post('/', celebrate({
